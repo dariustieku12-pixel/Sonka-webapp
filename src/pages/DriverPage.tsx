@@ -5,6 +5,7 @@ import { vehicleEmoji, vehicleLabel, DRIVER_LEVEL_COLORS } from '../lib/constant
 import { timeAgo } from '../lib/format';
 import type { Review } from '../lib/types';
 import { Avatar, EmptyState, FullSpinner, Stars, TopBar } from '../components/ui';
+import { useToast } from '../components/Toast';
 
 interface DriverProfile {
   vehicle_type?: string | null;
@@ -35,9 +36,13 @@ interface DriverDetail {
 export default function DriverPage() {
   const { id } = useParams<{ id: string }>();
   const nav = useNavigate();
+  const toast = useToast();
   const [driver, setDriver] = useState<DriverDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [following, setFollowing] = useState(false);
+  const [followers, setFollowers] = useState(0);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -50,10 +55,45 @@ export default function DriverPage() {
         if (alive) setError(errorMessage(err, 'Driver not found.'));
       })
       .finally(() => alive && setLoading(false));
+    api
+      .get(`/feed/users/${id}/follow-stats`)
+      .then((res) => {
+        if (!alive) return;
+        setFollowing(!!res.data.is_following);
+        setFollowers(res.data.follower_count || 0);
+      })
+      .catch(() => {});
     return () => {
       alive = false;
     };
   }, [id]);
+
+  async function toggleFollow() {
+    const next = !following;
+    setFollowing(next);
+    setFollowers((n) => n + (next ? 1 : -1));
+    try {
+      await api.post(`/feed/follow/${id}`);
+    } catch (err) {
+      setFollowing(!next);
+      setFollowers((n) => n + (next ? -1 : 1));
+      toast(errorMessage(err));
+    }
+  }
+
+  async function startChat() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const res = await api.post('/chat/conversations', { other_user_id: id });
+      nav(`/chat/${res.data.conversation_id}`, {
+        state: { name: driver?.name, photo: driver?.profile_photo_url },
+      });
+    } catch (err) {
+      toast(errorMessage(err));
+      setBusy(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -103,17 +143,35 @@ export default function DriverPage() {
               </div>
             </div>
           </div>
-          <div className="row" style={{ marginTop: 16, gap: 24 }}>
-            <div>
-              <div style={{ fontSize: 20, fontWeight: 700 }}>
-                {p.rating ? Number(p.rating).toFixed(1) : '—'}
+          <div className="row-between" style={{ marginTop: 16 }}>
+            <div className="row" style={{ gap: 24 }}>
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 700 }}>
+                  {p.rating ? Number(p.rating).toFixed(1) : '—'}
+                </div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Rating</div>
               </div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Rating</div>
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 700 }}>{p.total_trips || 0}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Trips</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 700 }}>{followers}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Followers</div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontSize: 20, fontWeight: 700 }}>{p.total_trips || 0}</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Trips</div>
-            </div>
+            <button
+              onClick={toggleFollow}
+              className="btn btn-sm"
+              style={{
+                width: 'auto',
+                background: following ? 'transparent' : 'var(--gold)',
+                color: following ? '#fff' : 'var(--navy)',
+                border: following ? '1.5px solid rgba(255,255,255,0.4)' : 'none',
+              }}
+            >
+              {following ? 'Following ✓' : '+ Follow'}
+            </button>
           </div>
         </div>
 
@@ -165,8 +223,14 @@ export default function DriverPage() {
       </div>
 
       {/* Sticky book button */}
-      <div className="pad" style={{ background: 'var(--white)', borderTop: '1px solid var(--light-grey)' }}>
-        <button className="btn btn-primary" onClick={() => nav(`/book/${driver.id}`)}>
+      <div
+        className="pad row"
+        style={{ background: 'var(--white)', borderTop: '1px solid var(--light-grey)', gap: 10 }}
+      >
+        <button className="btn btn-outline" style={{ flex: 1 }} disabled={busy} onClick={startChat}>
+          💬 Message
+        </button>
+        <button className="btn btn-primary" style={{ flex: 1.4 }} onClick={() => nav(`/book/${driver.id}`)}>
           Book this driver
         </button>
       </div>

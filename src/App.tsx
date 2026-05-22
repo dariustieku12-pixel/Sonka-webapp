@@ -10,6 +10,12 @@ import BookPage from './pages/BookPage';
 import BookingsPage from './pages/BookingsPage';
 import BookingDetailPage from './pages/BookingDetailPage';
 import ProfilePage from './pages/ProfilePage';
+import FeedPage from './pages/FeedPage';
+import PostCreatePage from './pages/PostCreatePage';
+import MessagesPage from './pages/MessagesPage';
+import ChatPage from './pages/ChatPage';
+import NotificationsPage from './pages/NotificationsPage';
+import BecomeDriverPage from './pages/BecomeDriverPage';
 import type { ReactElement } from 'react';
 
 // Gate that requires a logged-in user; bounces to /welcome otherwise.
@@ -44,7 +50,23 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        <Route path="/" element={<Navigate to="/map" replace />} />
+        <Route path="/" element={<Navigate to="/feed" replace />} />
+        <Route
+          path="/feed"
+          element={
+            <Protected>
+              <FeedPage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/post/create"
+          element={
+            <Protected>
+              <PostCreatePage />
+            </Protected>
+          }
+        />
         <Route
           path="/map"
           element={
@@ -86,6 +108,38 @@ export default function App() {
           }
         />
         <Route
+          path="/messages"
+          element={
+            <Protected>
+              <MessagesPage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/chat/:conversationId"
+          element={
+            <Protected>
+              <ChatPage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <Protected>
+              <NotificationsPage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/become-driver"
+          element={
+            <Protected>
+              <BecomeDriverPage />
+            </Protected>
+          }
+        />
+        <Route
           path="/profile"
           element={
             <Protected>
@@ -93,7 +147,7 @@ export default function App() {
             </Protected>
           }
         />
-        <Route path="*" element={<Navigate to="/map" replace />} />
+        <Route path="*" element={<Navigate to="/feed" replace />} />
       </Routes>
     </div>
   );

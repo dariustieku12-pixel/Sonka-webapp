@@ -66,11 +66,13 @@ export function TopBar({
   );
 }
 
-// Bottom tab bar — Map / Trips / Profile.
+// Bottom tab bar — Feed / Map / Trips / Messages / Profile.
 export function TabBar() {
   const tabs = [
+    { to: '/feed', icon: '📰', label: 'Feed' },
     { to: '/map', icon: '🗺️', label: 'Map' },
-    { to: '/bookings', icon: '🚚', label: 'My Trips' },
+    { to: '/bookings', icon: '🚚', label: 'Trips' },
+    { to: '/messages', icon: '💬', label: 'Chat' },
     { to: '/profile', icon: '👤', label: 'Profile' },
   ];
   return (

@@ -123,6 +123,20 @@ export default function ProfilePage() {
             </div>
           )}
 
+          {/* In-app navigation */}
+          <div className="section-title">Activity</div>
+          <div className="card" style={{ padding: 0 }}>
+            <NavRow label="🔔 Notifications" onClick={() => nav('/notifications')} />
+            <NavRow
+              label="🚚 My Trips"
+              onClick={() => nav('/bookings')}
+              last={user.user_type !== 'customer'}
+            />
+            {user.user_type === 'customer' && (
+              <NavRow label="🚛 Become a driver" onClick={() => nav('/become-driver')} last />
+            )}
+          </div>
+
           {/* Links */}
           <div className="section-title">SONKA</div>
           <div className="card" style={{ padding: 0 }}>
@@ -185,5 +199,24 @@ function LinkRow({ label, href, last }: { label: string; href: string; last?: bo
       <span>{label}</span>
       <span className="muted">›</span>
     </a>
+  );
+}
+
+function NavRow({ label, onClick, last }: { label: string; onClick: () => void; last?: boolean }) {
+  return (
+    <div
+      onClick={onClick}
+      className="row-between"
+      style={{
+        padding: '14px 16px',
+        borderBottom: last ? 'none' : '1px solid var(--off-white)',
+        fontSize: 14,
+        fontWeight: 500,
+        cursor: 'pointer',
+      }}
+    >
+      <span>{label}</span>
+      <span className="muted">›</span>
+    </div>
   );
 }

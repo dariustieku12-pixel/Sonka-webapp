@@ -87,3 +87,71 @@ export interface DriverLocation {
   last_seen?: string | null;
   stale: boolean;
 }
+
+export interface PostAuthor {
+  id: string;
+  name: string;
+  profile_photo_url?: string | null;
+  user_type?: string;
+  driver_profiles?: { vehicle_type?: string; driver_level?: string; rating?: number; total_trips?: number }[];
+}
+
+export interface Post {
+  id: string;
+  content?: string | null;
+  media_urls?: string[];
+  video_url?: string | null;
+  likes_count: number;
+  comments_count: number;
+  shares_count?: number;
+  city?: string | null;
+  post_type: string;
+  route_from?: string | null;
+  route_to?: string | null;
+  price_ghs?: number | null;
+  product_name?: string | null;
+  alert_severity?: string | null;
+  available_date?: string | null;
+  is_availability_post?: boolean;
+  is_sponsored?: boolean;
+  sponsor_name?: string | null;
+  sponsor_cta_url?: string | null;
+  created_at: string;
+  is_liked?: boolean;
+  user: PostAuthor;
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  created_at: string;
+  user: { id: string; name: string; profile_photo_url?: string | null };
+}
+
+export interface Conversation {
+  id: string;
+  other_user: { id: string; name: string; profile_photo_url?: string | null; user_type?: string };
+  last_message?: string | null;
+  last_message_at?: string | null;
+  unread: number;
+}
+
+export interface Message {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  content?: string | null;
+  media_url?: string | null;
+  media_type?: string | null;
+  is_read?: boolean;
+  created_at: string;
+}
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  data?: Record<string, unknown> | null;
+  read: boolean;
+  created_at: string;
+}
