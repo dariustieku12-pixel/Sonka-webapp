@@ -1,6 +1,7 @@
 // Small shared UI primitives.
 import { NavLink, useNavigate } from 'react-router-dom';
 import { initials } from '../lib/format';
+import { useUnreadCount } from '../lib/unread';
 
 export function Spinner() {
   return <div className="spinner" />;
@@ -68,17 +69,19 @@ export function TopBar({
 
 // Bottom tab bar — Feed / Map / Trips / Messages / Profile.
 export function TabBar() {
+  const unread = useUnreadCount();
   const tabs = [
-    { to: '/feed', icon: '📰', label: 'Feed' },
-    { to: '/map', icon: '🗺️', label: 'Map' },
-    { to: '/bookings', icon: '🚚', label: 'Trips' },
-    { to: '/messages', icon: '💬', label: 'Chat' },
-    { to: '/profile', icon: '👤', label: 'Profile' },
+    { to: '/feed', icon: '📰', label: 'Feed', badge: 0 },
+    { to: '/map', icon: '🗺️', label: 'Map', badge: 0 },
+    { to: '/bookings', icon: '🚚', label: 'Trips', badge: 0 },
+    { to: '/messages', icon: '💬', label: 'Chat', badge: unread },
+    { to: '/profile', icon: '👤', label: 'Profile', badge: 0 },
   ];
   return (
     <nav className="tabbar">
       {tabs.map((t) => (
         <NavLink key={t.to} to={t.to} className={({ isActive }) => (isActive ? 'active' : '')}>
+          {t.badge > 0 && <span className="tab-badge">{t.badge > 99 ? '99+' : t.badge}</span>}
           <span className="tab-icon">{t.icon}</span>
           {t.label}
         </NavLink>

@@ -155,7 +155,10 @@ export default function DriverPage() {
                 <div style={{ fontSize: 20, fontWeight: 700 }}>{p.total_trips || 0}</div>
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Trips</div>
               </div>
-              <div>
+              <div
+                onClick={() => nav(`/follows/${driver.id}`, { state: { tab: 'followers' } })}
+                style={{ cursor: 'pointer' }}
+              >
                 <div style={{ fontSize: 20, fontWeight: 700 }}>{followers}</div>
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Followers</div>
               </div>

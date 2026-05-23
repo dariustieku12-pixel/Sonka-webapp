@@ -10,7 +10,9 @@ import BookPage from './pages/BookPage';
 import BookingsPage from './pages/BookingsPage';
 import BookingDetailPage from './pages/BookingDetailPage';
 import ProfilePage from './pages/ProfilePage';
+import FollowsPage from './pages/FollowsPage';
 import FeedPage from './pages/FeedPage';
+import InstallBanner from './components/InstallBanner';
 import PostCreatePage from './pages/PostCreatePage';
 import MessagesPage from './pages/MessagesPage';
 import ChatPage from './pages/ChatPage';
@@ -45,6 +47,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <InstallBanner />
       <Routes>
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
@@ -144,6 +147,14 @@ export default function App() {
           element={
             <Protected>
               <ProfilePage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/follows/:userId"
+          element={
+            <Protected>
+              <FollowsPage />
             </Protected>
           }
         />

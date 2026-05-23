@@ -17,8 +17,24 @@ export default function ProfilePage() {
   const [city, setCity] = useState(user?.city || '');
   const [bio, setBio] = useState(user?.bio || '');
   const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   if (!user) return null;
+
+  async function uploadPhoto(file: File) {
+    setUploadingPhoto(true);
+    try {
+      const fd = new FormData();
+      fd.append('photo', file);
+      await api.post('/media/profile-photo', fd);
+      await refresh();
+      toast('Photo updated 📸');
+    } catch (err) {
+      toast(errorMessage(err));
+    } finally {
+      setUploadingPhoto(false);
+    }
+  }
 
   async function save() {
     setSaving(true);
@@ -58,7 +74,40 @@ export default function ProfilePage() {
         {/* Header */}
         <div style={{ background: 'var(--navy)', color: '#fff', padding: '24px 16px' }}>
           <div className="row">
-            <Avatar src={user.profile_photo_url} name={user.name} large />
+            <label style={{ position: 'relative', cursor: 'pointer' }}>
+              <Avatar src={user.profile_photo_url} name={user.name} large />
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  background: 'var(--gold)',
+                  color: 'var(--navy)',
+                  borderRadius: '50%',
+                  width: 26,
+                  height: 26,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 13,
+                  border: '2px solid var(--navy)',
+                }}
+                title="Change photo"
+              >
+                {uploadingPhoto ? '…' : '📷'}
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                disabled={uploadingPhoto}
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) uploadPhoto(f);
+                  e.target.value = '';
+                }}
+              />
+            </label>
             <div>
               <h2 style={{ color: '#fff', fontSize: 20 }}>{user.name}</h2>
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>{user.phone}</div>

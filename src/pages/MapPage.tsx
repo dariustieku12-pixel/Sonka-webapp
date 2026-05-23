@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api, { errorMessage } from '../lib/api';
 import { useGeolocation } from '../lib/geo';
-import { VEHICLE_TYPES, vehicleEmoji, vehicleLabel } from '../lib/constants';
+import { GHANA_REGIONS, VEHICLE_TYPES, vehicleEmoji, vehicleLabel } from '../lib/constants';
 import type { Driver } from '../lib/types';
 import MapView, { type MapPin } from '../components/MapView';
 import { Avatar, Spinner, Stars, TabBar, TopBar } from '../components/ui';
@@ -12,6 +12,7 @@ export default function MapPage() {
   const geo = useGeolocation();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [vehicle, setVehicle] = useState<string>('all');
+  const [region, setRegion] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -27,6 +28,7 @@ export default function MapPage() {
           lat,
           lng,
           ...(vehicle !== 'all' ? { vehicle_type: vehicle } : {}),
+          ...(region !== 'all' ? { region } : {}),
         },
       });
       setDrivers(res.data.drivers || []);
@@ -36,7 +38,7 @@ export default function MapPage() {
     } finally {
       setLoading(false);
     }
-  }, [lat, lng, vehicle]);
+  }, [lat, lng, vehicle, region]);
 
   useEffect(() => {
     load();
@@ -64,6 +66,42 @@ export default function MapPage() {
           </button>
         }
       />
+
+      {/* Region selector */}
+      <div
+        className="row"
+        style={{
+          padding: '8px 12px',
+          gap: 8,
+          background: 'var(--white)',
+          borderBottom: '1px solid var(--off-white)',
+          fontSize: 13,
+        }}
+      >
+        <span style={{ fontSize: 16 }}>📍</span>
+        <span className="muted" style={{ fontSize: 12 }}>Region</span>
+        <select
+          value={region}
+          onChange={(e) => setRegion(e.target.value)}
+          style={{
+            flex: 1,
+            padding: '6px 8px',
+            border: '1.5px solid var(--light-grey)',
+            borderRadius: 8,
+            background: 'var(--white)',
+            fontSize: 14,
+            color: 'var(--navy)',
+            fontWeight: 600,
+          }}
+        >
+          <option value="all">All Ghana (nearby first)</option>
+          {GHANA_REGIONS.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Vehicle filter chips */}
       <div

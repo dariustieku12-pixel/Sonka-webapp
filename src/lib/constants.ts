@@ -62,3 +62,23 @@ export function vehicleEmoji(type?: string | null): string {
   if (!type) return '🚚';
   return VEHICLE_EMOJIS[type] || '🚚';
 }
+
+// Ghana's 16 administrative regions — matches the backend's region filter.
+export const GHANA_REGIONS = [
+  'Ahafo',
+  'Ashanti',
+  'Bono',
+  'Bono East',
+  'Central',
+  'Eastern',
+  'Greater Accra',
+  'North East',
+  'Northern',
+  'Oti',
+  'Savannah',
+  'Upper East',
+  'Upper West',
+  'Volta',
+  'Western',
+  'Western North',
+];
