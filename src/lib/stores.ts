@@ -29,9 +29,9 @@ export const STORES: Store[] = [
     id: 'palmstore',
     name: 'PalmStore',
     emoji: '🌴',
-    // TODO: paste the SONKA listing URL on PalmStore — Tecno/Itel/Infinix devices.
-    url: '',
+    url: 'https://www.palmplaystore.com/detail/com.teleportprime.sonka?country=GH',
     primaryFor: ['transsion'],
+    showFor: ['samsung', 'xiaomi', 'other'],
   },
   {
     id: 'appgallery',
