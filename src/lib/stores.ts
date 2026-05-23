@@ -37,9 +37,9 @@ export const STORES: Store[] = [
     id: 'appgallery',
     name: 'Huawei AppGallery',
     emoji: '🟥',
-    // TODO: paste the SONKA listing URL on Huawei AppGallery.
-    url: '',
+    url: 'https://appgallery.huawei.com/app/C117421289',
     primaryFor: ['huawei'],
+    showFor: ['samsung', 'xiaomi', 'other'],
   },
   {
     id: 'apkpure',
