@@ -3,6 +3,12 @@
 
 export const API_URL = 'https://sonka-backend-production.up.railway.app';
 
+// SONKA explainer video on YouTube. Reused across Welcome screen,
+// Helpdesk page, and anywhere we want a "Watch how it works" link.
+export const VIDEO_ID = 'ldQ7QInvGco';
+export const VIDEO_URL = `https://youtu.be/${VIDEO_ID}`;
+export const VIDEO_EMBED = `https://www.youtube.com/embed/${VIDEO_ID}`;
+
 // Accra — fallback map centre when the browser denies geolocation.
 export const ACCRA: [number, number] = [5.6037, -0.187];
 

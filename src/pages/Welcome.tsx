@@ -1,5 +1,6 @@
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
+import { VIDEO_URL } from '../lib/constants';
 
 export default function Welcome() {
   const { user } = useAuth();
@@ -55,6 +56,21 @@ export default function Welcome() {
           <Link to="/login" className="btn btn-outline" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)' }}>
             I already have an account
           </Link>
+          <a
+            href={VIDEO_URL}
+            target="_blank"
+            rel="noopener"
+            style={{
+              textAlign: 'center',
+              fontSize: 14,
+              color: 'var(--gold)',
+              fontWeight: 700,
+              marginTop: 6,
+              textDecoration: 'underline',
+            }}
+          >
+            ▶ Watch how SONKA works
+          </a>
           <p style={{ textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>
             Driver? Get the SONKA app on Android to go live on the map.
           </p>

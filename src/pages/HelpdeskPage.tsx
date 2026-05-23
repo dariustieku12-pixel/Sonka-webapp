@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { TopBar } from '../components/ui';
 import StoreList from '../components/StoreList';
+import { VIDEO_EMBED } from '../lib/constants';
 
 const PHONE_1 = '0538214744';
 const PHONE_2 = '0545989494';
@@ -57,7 +58,29 @@ export default function HelpdeskPage() {
       <TopBar title="Help & Support" back />
       <div className="screen-scroll pad">
         <h1 style={{ fontSize: 22, marginTop: 6 }}>We're here to help</h1>
-        <p className="muted" style={{ marginBottom: 18 }}>Reach us anytime — fastest on WhatsApp.</p>
+        <p className="muted" style={{ marginBottom: 14 }}>Reach us anytime — fastest on WhatsApp.</p>
+
+        {/* Video — SONKA in 60 seconds */}
+        <div
+          style={{
+            position: 'relative',
+            paddingBottom: '56.25%',
+            height: 0,
+            overflow: 'hidden',
+            borderRadius: 12,
+            marginBottom: 18,
+            background: '#000',
+          }}
+        >
+          <iframe
+            src={VIDEO_EMBED}
+            title="SONKA — how it works"
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+          />
+        </div>
 
         {/* Contact cards */}
         <div className="section-title" style={{ marginTop: 0 }}>Contact us</div>
