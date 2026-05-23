@@ -1,23 +1,22 @@
 // Smart install banner — picks the right install target by device.
 //
-//   Android   → "Get the SONKA Android app" → Play Store (real native app)
-//   iOS       → "Add to Home Screen" instructions (iOS has no Play Store
-//               for SONKA and doesn't fire beforeinstallprompt)
-//   Desktop   → PWA install via beforeinstallprompt (when the browser
-//               offers it; otherwise hidden)
+//   Android (any brand) → multi-store list with the right primary store
+//                         per brand (Transsion → PalmStore, Huawei →
+//                         AppGallery, Samsung/Xiaomi/other → Play Store)
+//   iOS                 → "Add to Home Screen" instructions
+//   Desktop             → PWA install via beforeinstallprompt
 //
 // Dismissals are remembered in localStorage so it doesn't nag.
 
 import { useEffect, useState } from 'react';
+import { brandLabel, detectBrand, storesFor, type Store } from '../lib/stores';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-const DISMISS_KEY = 'sonka_install_dismissed_v2';
-const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.teleportprime.sonka';
-const APKPURE_URL = 'https://apkpure.com/sonka/com.teleportprime.sonka';
+const DISMISS_KEY = 'sonka_install_dismissed_v3';
 
 type Mode = 'android' | 'ios' | 'desktop' | null;
 
@@ -41,6 +40,7 @@ export default function InstallBanner() {
   const [evt, setEvt] = useState<BeforeInstallPromptEvent | null>(null);
   const [mode, setMode] = useState<Mode>(null);
   const [iosHelp, setIosHelp] = useState(false);
+  const [expandStores, setExpandStores] = useState(false);
   const [dismissed, setDismissed] = useState(() => !!localStorage.getItem(DISMISS_KEY));
 
   useEffect(() => {
@@ -59,8 +59,6 @@ export default function InstallBanner() {
   }, []);
 
   if (dismissed || !mode) return null;
-  // On desktop we only show the banner if the browser actually offers PWA install.
-  if (mode === 'desktop' && !evt) return null;
 
   function dismiss() {
     localStorage.setItem(DISMISS_KEY, '1');
@@ -75,50 +73,48 @@ export default function InstallBanner() {
     setDismissed(true);
   }
 
-  // ── Android: push to Play Store ─────────────────────────────────────
+  // ── Android: device-aware multi-store ─────────────────────────────
   if (mode === 'android') {
+    const brand = detectBrand();
+    const stores = storesFor(brand);
+    if (stores.length === 0) return null;
+    const primary = stores[0];
+    const others = stores.slice(1);
+
     return (
-      <div className="install-banner">
+      <div className="install-banner" style={{ flexWrap: 'wrap' }}>
         <span style={{ fontSize: 18 }}>📲</span>
-        <span>Get the full SONKA Android app</span>
-        <a
-          href={PLAY_URL}
-          target="_blank"
-          rel="noopener"
-          style={{
-            marginLeft: 'auto',
-            background: 'var(--navy)',
-            color: 'var(--white)',
-            padding: '6px 12px',
-            borderRadius: 8,
-            fontWeight: 700,
-            fontSize: 12,
-            textDecoration: 'none',
-          }}
-        >
-          Play Store
-        </a>
-        <a
-          href={APKPURE_URL}
-          target="_blank"
-          rel="noopener"
-          style={{
-            color: 'var(--navy)',
-            fontSize: 11,
-            textDecoration: 'underline',
-            marginLeft: 4,
-          }}
-        >
-          APKPure
-        </a>
-        <button onClick={dismiss} className="dismiss" aria-label="Dismiss">
-          ×
-        </button>
+        <span style={{ flex: 1, minWidth: 0 }}>
+          Get SONKA on your {brandLabel(brand)}
+        </span>
+        <StoreLink store={primary} />
+        {others.length > 0 && (
+          <button onClick={() => setExpandStores((v) => !v)} className="dismiss" title="Other stores">
+            {expandStores ? '×' : '⋯'}
+          </button>
+        )}
+        {!others.length && (
+          <button onClick={dismiss} className="dismiss" aria-label="Dismiss">
+            ×
+          </button>
+        )}
+        {expandStores && (
+          <div
+            style={{ flexBasis: '100%', display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}
+          >
+            {others.map((s) => (
+              <StoreLink key={s.id} store={s} small />
+            ))}
+            <button onClick={dismiss} className="dismiss" aria-label="Dismiss" style={{ marginLeft: 'auto' }}>
+              ×
+            </button>
+          </div>
+        )}
       </div>
     );
   }
 
-  // ── iOS: instructions (Apple has no install prompt API) ─────────────
+  // ── iOS: instructions (Apple has no install prompt API) ───────────
   if (mode === 'ios') {
     return (
       <>
@@ -163,7 +159,9 @@ export default function InstallBanner() {
                 <li>
                   Scroll and tap <strong>"Add to Home Screen"</strong>.
                 </li>
-                <li>Tap <strong>Add</strong>. SONKA appears as an app icon.</li>
+                <li>
+                  Tap <strong>Add</strong>. SONKA appears as an app icon.
+                </li>
               </ol>
               <button
                 className="btn btn-primary btn-sm"
@@ -179,7 +177,8 @@ export default function InstallBanner() {
     );
   }
 
-  // ── Desktop: PWA install ────────────────────────────────────────────
+  // ── Desktop: PWA install (only when browser offers it) ────────────
+  if (!evt) return null;
   return (
     <div className="install-banner">
       <span style={{ fontSize: 18 }}>📲</span>
@@ -189,5 +188,28 @@ export default function InstallBanner() {
         ×
       </button>
     </div>
+  );
+}
+
+function StoreLink({ store, small }: { store: Store; small?: boolean }) {
+  return (
+    <a
+      href={store.url}
+      target="_blank"
+      rel="noopener"
+      style={{
+        background: small ? 'transparent' : 'var(--navy)',
+        color: small ? 'var(--navy)' : 'var(--white)',
+        padding: small ? '4px 10px' : '6px 12px',
+        borderRadius: 8,
+        fontWeight: 700,
+        fontSize: small ? 11 : 12,
+        textDecoration: 'none',
+        border: small ? '1px solid rgba(27,42,74,0.3)' : 'none',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {store.emoji} {store.name}
+    </a>
   );
 }
