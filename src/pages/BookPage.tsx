@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api, { errorMessage } from '../lib/api';
-import { vehicleEmoji, vehicleLabel } from '../lib/constants';
+import { BOOKING_DEMO_MP4, vehicleEmoji, vehicleLabel } from '../lib/constants';
 import { useToast } from '../components/Toast';
 import { Avatar, FullSpinner, TopBar } from '../components/ui';
 import LocationField, { type PlaceValue } from '../components/LocationField';
@@ -96,6 +96,38 @@ export default function BookPage() {
             </div>
           </div>
         )}
+
+        <details style={{ marginBottom: 14 }}>
+          <summary
+            style={{
+              cursor: 'pointer',
+              padding: '10px 14px',
+              background: 'var(--white)',
+              border: '1.5px solid var(--gold)',
+              borderRadius: 10,
+              fontSize: 13,
+              fontWeight: 700,
+              color: 'var(--navy)',
+              listStyle: 'none',
+            }}
+          >
+            ▶ First time booking? Watch how it works (30 sec)
+          </summary>
+          <video
+            controls
+            preload="metadata"
+            playsInline
+            style={{
+              width: '100%',
+              marginTop: 8,
+              borderRadius: 10,
+              background: '#000',
+              boxShadow: 'var(--shadow)',
+            }}
+          >
+            <source src={BOOKING_DEMO_MP4} type="video/mp4" />
+          </video>
+        </details>
 
         <div className="section-title">Pickup</div>
         <LocationField label="Where should the driver collect from?" value={pickup} onChange={setPickup} allowMyLocation />

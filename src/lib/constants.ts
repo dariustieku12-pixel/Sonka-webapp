@@ -9,6 +9,11 @@ export const VIDEO_ID = 'ldQ7QInvGco';
 export const VIDEO_URL = `https://youtu.be/${VIDEO_ID}`;
 export const VIDEO_EMBED = `https://www.youtube.com/embed/${VIDEO_ID}`;
 
+// Self-hosted booking-flow demo (MP4). Used on the Book page so
+// customers see what they're about to do before they do it.
+export const BOOKING_DEMO_MP4 =
+  'https://dariustieku12-pixel.github.io/Sonka-website/videos/booking-demo.mp4';
+
 // Accra — fallback map centre when the browser denies geolocation.
 export const ACCRA: [number, number] = [5.6037, -0.187];
 
