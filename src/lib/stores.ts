@@ -18,20 +18,20 @@ export interface Store {
 export type BrandKey = 'transsion' | 'huawei' | 'samsung' | 'xiaomi' | 'other';
 
 export const STORES: Store[] = [
-  {
-    id: 'play',
-    name: 'Google Play',
-    emoji: '▶',
-    url: 'https://play.google.com/store/apps/details?id=com.teleportprime.sonka',
-    primaryFor: ['samsung', 'xiaomi', 'other'],
-  },
+  // NOTE: Google Play is intentionally omitted. The public Play Store URL
+  // returns 404 because SONKA is still in the closed-test track (waiting
+  // on Play Console identity verification + 20-tester requirement).
+  // When the app goes public, re-add:
+  //   { id: 'play', name: 'Google Play', emoji: '▶',
+  //     url: 'https://play.google.com/store/apps/details?id=com.teleportprime.sonka',
+  //     primaryFor: ['samsung', 'xiaomi', 'other'] }
   {
     id: 'palmstore',
     name: 'PalmStore',
     emoji: '🌴',
     url: 'https://www.palmplaystore.com/detail/com.teleportprime.sonka?country=GH',
     primaryFor: ['transsion'],
-    showFor: ['samsung', 'xiaomi', 'other'],
+    showFor: ['huawei', 'samsung', 'xiaomi', 'other'],
   },
   {
     id: 'appgallery',
@@ -39,15 +39,16 @@ export const STORES: Store[] = [
     emoji: '🟥',
     url: 'https://appgallery.huawei.com/app/C117421289',
     primaryFor: ['huawei'],
-    showFor: ['samsung', 'xiaomi', 'other'],
+    showFor: ['transsion', 'samsung', 'xiaomi', 'other'],
   },
   {
     id: 'apkpure',
     name: 'APKPure',
     emoji: '⬇',
     url: 'https://apkpure.com/sonka/com.teleportprime.sonka',
-    primaryFor: [],
-    showFor: ['transsion', 'huawei', 'samsung', 'xiaomi', 'other'],
+    // Universal fallback — works on any Android, no Play Store needed.
+    primaryFor: ['samsung', 'xiaomi', 'other'],
+    showFor: ['transsion', 'huawei'],
   },
 ];
 
@@ -79,11 +80,5 @@ export function storesFor(brand: BrandKey): Store[] {
   const alts = STORES.filter(
     (s) => s.url && !s.primaryFor.includes(brand) && (s.showFor?.includes(brand) ?? false)
   );
-  // If we know the brand but have no primary URL yet, fall back to Play Store
-  // so the user is never stranded.
-  if (primary.length === 0 && brand !== 'samsung' && brand !== 'xiaomi' && brand !== 'other') {
-    const play = STORES.find((s) => s.id === 'play');
-    if (play?.url) primary.push(play);
-  }
   return [...primary, ...alts];
 }
