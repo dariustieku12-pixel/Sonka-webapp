@@ -18,6 +18,7 @@ import MessagesPage from './pages/MessagesPage';
 import ChatPage from './pages/ChatPage';
 import NotificationsPage from './pages/NotificationsPage';
 import BecomeDriverPage from './pages/BecomeDriverPage';
+import HelpdeskPage from './pages/HelpdeskPage';
 import type { ReactElement } from 'react';
 
 // Gate that requires a logged-in user; bounces to /welcome otherwise.
@@ -155,6 +156,14 @@ export default function App() {
           element={
             <Protected>
               <FollowsPage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/helpdesk"
+          element={
+            <Protected>
+              <HelpdeskPage />
             </Protected>
           }
         />

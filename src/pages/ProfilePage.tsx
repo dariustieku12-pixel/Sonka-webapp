@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api, { errorMessage } from '../lib/api';
 import { useAuth } from '../lib/auth';
 import { useToast } from '../components/Toast';
+import StoreList from '../components/StoreList';
 import { Avatar, TabBar, TopBar } from '../components/ui';
 
 const SITE = 'https://dariustieku12-pixel.github.io/Sonka-website';
@@ -186,13 +187,19 @@ export default function ProfilePage() {
             )}
           </div>
 
+          {/* Get the mobile app — all stores */}
+          <div className="section-title">Get the SONKA app</div>
+          <p className="muted" style={{ fontSize: 12, marginBottom: 10 }}>
+            For live map, push notifications and driver-online mode.
+          </p>
+          <StoreList />
+
           {/* Links */}
           <div className="section-title">SONKA</div>
           <div className="card" style={{ padding: 0 }}>
-            <LinkRow label="📱 Get the mobile app" href="https://play.google.com/store/apps/details?id=com.teleportprime.sonka" />
+            <NavRow label="🛟 Help & Support" onClick={() => nav('/helpdesk')} />
             <LinkRow label="📄 Terms of Service" href={`${SITE}/terms-of-service.html`} />
-            <LinkRow label="🔒 Privacy Policy" href={`${SITE}/privacy-policy.html`} />
-            <LinkRow label="✉️ Contact support" href="mailto:dariustieku12@gmail.com" last />
+            <LinkRow label="🔒 Privacy Policy" href={`${SITE}/privacy-policy.html`} last />
           </div>
 
           <button className="btn btn-outline" style={{ marginTop: 14 }} onClick={logout}>
