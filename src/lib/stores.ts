@@ -49,15 +49,6 @@ export const STORES: Store[] = [
     primaryFor: [],
     showFor: ['transsion', 'huawei', 'samsung', 'xiaomi', 'other'],
   },
-  {
-    id: 'aptoide',
-    name: 'Aptoide',
-    emoji: '⬇',
-    // TODO: replace placeholder with the real SONKA Aptoide listing URL.
-    url: '',
-    primaryFor: [],
-    showFor: ['transsion', 'huawei', 'samsung', 'xiaomi', 'other'],
-  },
 ];
 
 export function detectBrand(): BrandKey {
